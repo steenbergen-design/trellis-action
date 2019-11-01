@@ -1,6 +1,9 @@
 name: 'Trells Deploy'
 description: |
   Deploy Trellis, Bedrock and Sage(optional) via Github Actions
+branding:
+  icon: 'upload-cloud'  
+  color: 'blue'
 inputs:
     role_file:
       description: galaxy role file containing a list of roles to be imported
