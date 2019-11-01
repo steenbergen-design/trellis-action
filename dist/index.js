@@ -655,7 +655,8 @@ const verbose = core.getInput('verbose') ? '-vvv' : '';
 
 try {
     // Move to trellis dir
-    process.chdir(`${process.env['GITHUB_WORKSPACE']}/trellis/`);
+    const trellis_path = core.getInput('trellis_path');
+    process.chdir(trellis_path ? trellis_path : `${process.env['GITHUB_WORKSPACE']}/trellis/`);
 } catch (error) {
     core.setFailed(`${process.env['GITHUB_WORKSPACE']}/trellis/ doesn\'t exist. Make sure to run actions/checkout before this`);
 }
