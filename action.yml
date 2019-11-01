@@ -1,0 +1,34 @@
+name: 'Trells Deploy'
+description: |
+  Deploy Trellis, Bedrock and Sage(optional) via Github Actions
+inputs:
+    role_file:
+      description: galaxy role file containing a list of roles to be imported
+      default: "galaxy.yml"
+      required: false
+    vault_password:
+      description: ansible vault password
+      default: '$VAULT_PASSWORD'
+      required: false
+    vault_password_file:
+      description: ansible vault password file to use. Must be the same one in ansible.cfg(if applicable)
+      default: .vault_pass
+      required: false
+    site_env:
+      description: the environment to deploy to (staging, production, etc)
+      required: true
+    site_name:
+      description: the WordPress site to deploy (name defined in wordpress_sites)
+      required: false
+    site_key:
+      description: Search the WordPress site by key == value
+      required: false
+    site_value:
+      description: Search the WordPress site by key == value
+      required: false
+    verbose: 
+      default: false
+      required: false
+runs:
+  using: 'node12'
+  main: 'dist/index.js'
