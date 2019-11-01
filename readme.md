@@ -27,7 +27,7 @@ example.com/      # → Root folder for the project
 To install `main.yml`:
 1. Set up SSH keys, Ansible Vault password and commit Trellis changes described in the following sections
 1. In your repository, go to the *Settings > Secrets* menu and create a new secret called `vault_pass`. Put the vault pass into the contents field.
-1. In your workflow definition file, add `xilonz/trellis-action@v0.1.1`. See next example:
+1. In your workflow definition file, add `xilonz/trellis-action@v0.1.2`. See next example:
 
 ```yaml
 # .github/workflows/main.yml
@@ -45,7 +45,7 @@ jobs:
           with:
             ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
         - uses: actions/checkout@v1
-        - uses: xilonz/trellis-action@v0.1.1
+        - uses: xilonz/trellis-action@v0.1.2
           with: 
             vault_password: ${{ secrets.vault_pass }}
             site_env: production
@@ -70,7 +70,7 @@ See: [roots/trellis#883 (comment)](https://github.com/roots/trellis/issues/883#i
 
 1. Set up SSH keys, Ansible Vault password and commit Trellis changes described in the following sections
 1. In your repository, go to the *Settings > Secrets* menu and create a new secret called `vault_pass`. Put the vault pass into the contents field.
-1. In your workflow definition file, add `xilonz/trellis-action@v0.1.1`. See next example:
+1. In your workflow definition file, add `xilonz/trellis-action@v0.1.2`. See next example:
 
 
 ```yaml
@@ -98,7 +98,7 @@ jobs:
                 ls -la $GITHUB_WORKSPACE/$SITE_LOCAL_PATH
         - name: Clone Trellis Repo
             run: git clone --verbose --branch $TRELLIS_BRANCH --depth 1 $TRELLIS_REPO $GITHUB_WORKSPACE/trellis
-        - uses: xilonz/trellis-action@v0.1.1
+        - uses: xilonz/trellis-action@v0.1.2
           with: 
             vault_password: ${{ secrets.vault_pass }}
             site_env: production
@@ -169,7 +169,7 @@ The examples assume you have defined `vault_password_file = .vault_pass` in `ans
 
 To use another vault password filename:
 ```diff
-        - uses: xilonz/trellis-action@v0.1.1
+        - uses: xilonz/trellis-action@v0.1.2
           with: 
             vault_password: ${{ secrets.vault_pass }}
 +           vault_password_file: myvaultfile.txt
@@ -180,7 +180,7 @@ To use another vault password filename:
 Using [Ansible Vault](https://docs.ansible.com/ansible/playbooks_vault.html) to encrypt sensitive data is strongly recommended. In case you have a very strong reason not to use Ansible Vault, remove the var:
 
 ```diff
-        - uses: xilonz/trellis-action@v0.1.1
+        - uses: xilonz/trellis-action@v0.1.2
           with: 
 -           vault_password: ${{ secrets.vault_pass }}
             site_env: production
@@ -192,7 +192,7 @@ You can also choose to deploy multiple sites at once by searching for `site_key 
 If someone has a more elegant solution. Please PR!
 
 ```diff
-        - uses: xilonz/trellis-action@v0.1.1
+        - uses: xilonz/trellis-action@v0.1.2
           with: 
             vault_password: ${{ secrets.vault_pass }}
             site_env: production
