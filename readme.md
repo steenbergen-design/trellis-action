@@ -1,14 +1,13 @@
 # Trellis Deploy GitHub Action
 
 This action deploys your bedrock site to your trellis environment.
-This action will automaticly symlink trellis and site_local to their right places. 
+This action will symlink site_local to their right place as defined in `wordpress_sites.yml`, so you're also covered when trellis and your bedrock setup are not in the same repo.
 
 ## Requirements
 - [Trellis](https://github.com/roots/trellis) (pyhton 3 compatable)
 - [Github Actions](https://github.com/features/actions)
 - (Optional) Bedrock
 - (Optional) Sage [9.0.1](https://github.com/roots/sage/releases/tag/9.0.1) (node 10 compatibe) or later
-- A Docker image with ansible preinstaled. `cytopia/ansible:2.7-tools` or `cytopia/ansible:2.7` recommended
 
 ## `with` args
 Check [`action.yml`](./action.yml) inputs for all `with` args available. You can also define `env` vars to use with ansible. 
@@ -69,38 +68,26 @@ See: [roots/trellis#883 (comment)](https://github.com/roots/trellis/issues/883#i
 
 1. Set up SSH keys, Ansible Vault password and commit Trellis changes described in the following sections
 1. In your repository, go to the *Settings > Secrets* menu and create a new secret called `vault_pass`. Put the vault pass into the contents field.
-1. In your workflow definition file, add `xilonz/trellis-action@v0.1.2`. See next example:
+1. In your workflow definition file, add `xilonz/trellis-action@v0.1.2` and another checkout action for your trellis repo. See next example. The trellis action will move the site to its right directory, so there's no additional setup required. 
 
-
-```yaml
-# .github/workflows/main.yml
-jobs:
-  my_job:
+```diff
     ...
     steps:
     - uses: actions/checkout@v1
 
-    - uses: actions/checkout@v1
-      with:
-        repository: roots/trellis
-        ref: master
-        token: ${{ secrets.GIT_PAT }}
-        path: ${{ github.repository }}/trellis
-        fetch-depth: 1 
++   - uses: actions/checkout@v1
++     with:
++       repository: roots/trellis
++       ref: master
++       token: ${{ secrets.GIT_PAT }} #Your github acces token
++       path: repo-name/trellis
++       fetch-depth: 1 
 
     - uses: webfactory/ssh-agent@v0.1.1
       with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
           ssh-auth-sock: ${{ github.workspace }}/ssh-auth.sock 
-
-    - name: Trellis Deploy!
-      uses: xilonz/trellis-deploy@0.1.3
-      with: 
-        vault_password: ${{ secrets.VAULT_PASS }}
-        site_env: production
-        site_name: example.com
-        site_path:  ${{ github.workspace }}
-        trellis_path: ${{ github.workspace }}/trellis
+    ...
 ```
 
 ## SSH Key 

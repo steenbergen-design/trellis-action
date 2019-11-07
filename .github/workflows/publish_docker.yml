@@ -14,7 +14,7 @@ jobs:
       with:
         USERNAME: ${{ secrets.DOCKER_USERNAME }}
         PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-        IMAGE_NAME: 'ansible-sage'
+        IMAGE_NAME: 'ansiblesage'
         DOCKERFILE_PATH: 'Dockerfile'
         BUILD_CONTEXT: './'
         cache: true
