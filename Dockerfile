@@ -20,4 +20,4 @@ RUN apk add --no-cache --virtual .build-deps \
 # Dont use this, we have everything precompiled
 #RUN yarn install --production --silent --non-interactive
 
-ENTRYPOINT ["node", "index.js"]
+ENTRYPOINT ["node", "./index.js"]
