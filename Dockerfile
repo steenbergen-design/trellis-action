@@ -1,7 +1,7 @@
   
 FROM cytopia/ansible:2.7-tools
 
-COPY ./dist/index.js ./index.js
+COPY ./dist/index.js /index.js
 
 # Basic Packages + Sage
 RUN apk add --no-cache --virtual .build-deps \
@@ -20,4 +20,4 @@ RUN apk add --no-cache --virtual .build-deps \
 # Dont use this, we have everything precompiled
 #RUN yarn install --production --silent --non-interactive
 
-ENTRYPOINT ["node", "./index.js"]
+ENTRYPOINT ["node", "/index.js"]
