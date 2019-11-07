@@ -54,7 +54,7 @@ inputs:
       required: false
 runs:
   using: 'docker'
-  image: docker://docker.pkg.github.com/Xilonz/trellis-action/ansible-sage:latest
+  image: docker://docker.pkg.github.com/xilonz/trellis-action/ansible-sage:latest
   env:
     ANSIBLE_HOST_KEY_CHECKING: false
     ANSIBLE_STRATEGY_PLUGINS: /usr/lib/python3.6/site-packages/ansible_mitogen/plugins/strategy
