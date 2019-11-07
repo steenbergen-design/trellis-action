@@ -652,7 +652,7 @@ const child_process = __webpack_require__(129);
 const fs = __webpack_require__(747);
 const yaml = __webpack_require__(414);
 
-const verbose = core.getInput('verbose') ? '-vvv' : '';
+const verbose = core.getInput('verbose') == 'true' ? '-vvv' : false;
 
 const site_path = core.getInput('site_path');
 const trellis_path = core.getInput('trellis_path');

@@ -3,7 +3,7 @@ const child_process = require('child_process');
 const fs = require('fs');
 const yaml = require('js-yaml');
 
-const verbose = core.getInput('verbose') ? '-vvv' : '';
+const verbose = core.getInput('verbose') == 'true' ? '-vvv' : false;
 
 const site_path = core.getInput('site_path');
 const trellis_path = core.getInput('trellis_path');

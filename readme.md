@@ -14,7 +14,7 @@ Check [`action.yml`](./action.yml) inputs for all `with` args available. You can
 
 ## File Structures
 
-[Trellis Deploy](https://github.com/Xilonz/trellis-action) comes with 2 different `main.yml` examples. They are expecting different Trellis and Bedrock structures.
+[Trellis Deploy](https://github.com/steenbergen-design/trellis-action) comes with 2 different `main.yml` examples. They are expecting different Trellis and Bedrock structures.
 
 ### Official
 
@@ -29,7 +29,7 @@ example.com/      # → Root folder for the project
 To install `main.yml`:
 1. Set up SSH keys, Ansible Vault password and commit Trellis changes described in the following sections
 1. In your repository, go to the *Settings > Secrets* menu and create a new secret called `vault_pass`. Put the vault pass into the contents field.
-1. In your workflow definition file, add `xilonz/trellis-action@v0.1.2`. See next example:
+1. In your workflow definition file, add `steenbergen-design/trellis-action@v1`. See next example:
 
 ```yaml
 # .github/workflows/main.yml
@@ -43,7 +43,7 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      - uses: xilonz/trellis-action@v0.1.2
+      - uses: steenbergen-design/trellis-action@v1
         with: 
           vault_password: ${{ secrets.VAULT_PASS }}
           site_env: production
@@ -68,7 +68,7 @@ See: [roots/trellis#883 (comment)](https://github.com/roots/trellis/issues/883#i
 
 1. Set up SSH keys, Ansible Vault password and commit Trellis changes described in the following sections
 1. In your repository, go to the *Settings > Secrets* menu and create a new secret called `vault_pass`. Put the vault pass into the contents field.
-1. In your workflow definition file, add `xilonz/trellis-action@v0.1.2` and another checkout action for your trellis repo. See next example. The trellis action will move the site to its right directory, so there's no additional setup required. 
+1. In your workflow definition file, add `steenbergen-design/trellis-action@v1` and another checkout action for your trellis repo. See next example. The trellis action will move the site to its right directory, so there's no additional setup required. 
 
 ```diff
     ...
@@ -154,7 +154,7 @@ The examples assume you have defined `vault_password_file = .vault_pass` in `ans
 
 To use another vault password filename:
 ```diff
-        - uses: xilonz/trellis-action@v0.1.2
+        - uses: steenbergen-design/trellis-action@v1
           with: 
             vault_password: ${{ secrets.vault_pass }}
 +           vault_password_file: myvaultfile.txt
@@ -165,7 +165,7 @@ To use another vault password filename:
 Using [Ansible Vault](https://docs.ansible.com/ansible/playbooks_vault.html) to encrypt sensitive data is strongly recommended. In case you have a very strong reason not to use Ansible Vault, remove the var:
 
 ```diff
-        - uses: xilonz/trellis-action@v0.1.2
+        - uses: steenbergen-design/trellis-action@v1
           with: 
 -           vault_password: ${{ secrets.vault_pass }}
             site_env: production
@@ -177,7 +177,7 @@ You can also choose to deploy multiple sites at once by searching for `site_key 
 If someone has a more elegant solution. Please PR!
 
 ```diff
-        - uses: xilonz/trellis-action@v0.1.2
+        - uses: steenbergen-design/trellis-action@v1
           with: 
             vault_password: ${{ secrets.vault_pass }}
             site_env: production
@@ -207,7 +207,7 @@ As a note to my future self, in order to work on this repo:
 * Maybe update the README example when publishing a new version.
 
 ## Credits, Copyright and License
-[Trellis Action](https://github.com/Xilonz/trellis-action) is a [Steenbergen Design](https://steenbergen.design) project and maintained by Arjan Steenbergen
+[Trellis Action](https://github.com/steenbergen-design/trellis-action) is a [Steenbergen Design](https://steenbergen.design) project and maintained by Arjan Steenbergen
 
 Special thanks to [the Roots team](https://roots.io/about/) whose [Trellis](https://github.com/roots/trellis) make this project possible. Also special thanks to [TypistTech](https://github.com/TypistTech) where I got a lot if inspiration and got [parts](https://github.com/TypistTech/tiller-circleci) of this documentation from.
 
