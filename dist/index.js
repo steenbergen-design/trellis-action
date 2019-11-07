@@ -657,6 +657,8 @@ const verbose = core.getInput('verbose') ? '-vvv' : '';
 const site_path = core.getInput('site_path');
 const trellis_path = core.getInput('trellis_path');
 
+// TODO:
+// Switch to build in core.debug for debugging. 
 if(verbose) {
     console.log(`
 Verbose: ${core.getInput('verbose')} (${verbose})
@@ -728,7 +730,7 @@ try {
 }
 
 
-// Galaxy roles
+// Log Yarn Cache Files
 if(verbose) {
     core.startGroup('Yarn Cache Files')
     try {
@@ -736,7 +738,7 @@ if(verbose) {
             console.log(file);
         });    
     } catch (error) {
-        core.error('Yarn cache files fetch failed '+error.message);
+        console.log('No yarn cache files found: '+error.message);
     }
     core.endGroup();
 }
