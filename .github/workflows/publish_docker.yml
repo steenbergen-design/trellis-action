@@ -3,28 +3,22 @@ on: push
 
 jobs: 
   build:
-    name: Deploy Master to ${{ github.event.deployment.environment }}
+    name: Publish to GitHub Package Registry
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
 
-    - name: Publish Docker Images to GPR
-      uses: machine-learning-apps/gpr-docker-publish@v1.3
+    - name: Publish to GitHub Package Registry
+      uses: elgohr/Publish-Docker-Github-Action@master
       id: docker
       with:
-        USERNAME: ${{ secrets.DOCKER_USERNAME }}
-        PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-        IMAGE_NAME: 'ansiblesage'
-        DOCKERFILE_PATH: 'Dockerfile'
-        BUILD_CONTEXT: './'
-        cache: true
+        name: xilonz/ansible-sage
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+        registry: docker.pkg.github.com
 
-    # This second step is illustrative and shows how to reference the 
-    # output variables.  This is completely optional.
-    - name: Show outputs of pervious step
+    - name: Results of publishing package
       run: |
-        echo "The name:tag of the Docker Image is: $VAR1"
-        echo "The docker image is hosted at $VAR2"
+        echo "The tag of the Docker Image is: $VAR1"
       env:
-        VAR1: ${{ steps.docker.outputs.IMAGE_SHA_NAME }}
-        VAR2: ${{ steps.docker.outputs.IMAGE_URL }}
+        VAR1: ${{ steps.docker.outputs.tag }}
