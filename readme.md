@@ -1,14 +1,17 @@
 # Trellis Deploy GitHub Action
 
 This action deploys your bedrock site to your trellis environment.
-This action expects trellis in the `$GITHUB_WORKSPACE/trellis` subdirectory. 
+This action will automaticly symlink trellis and site_local to their right places. 
 
 ## Requirements
-- [Trellis](https://github.com/roots/trellis) 
+- [Trellis](https://github.com/roots/trellis) (pyhton 3 compatable)
 - [Github Actions](https://github.com/features/actions)
 - (Optional) Bedrock
-- (Optional, Not Tested!) Sage [9.0.1](https://github.com/roots/sage/releases/tag/9.0.1) or later
+- (Optional) Sage [9.0.1](https://github.com/roots/sage/releases/tag/9.0.1) (node 10 compatibe) or later
 - A Docker image with ansible preinstaled. `cytopia/ansible:2.7-tools` or `cytopia/ansible:2.7` recommended
+
+## `with` args
+Check [`action.yml`](./action.yml) inputs for all `with` args available. You can also define `env` vars to use with ansible. 
 
 ## File Structures
 
@@ -34,22 +37,18 @@ To install `main.yml`:
 jobs:
     my_job:
     ...
-        container:
-        image: cytopia/ansible:2.7-tools
-        env:
-            ANSIBLE_HOST_KEY_CHECKING: false
-            ANSIBLE_STRATEGY_PLUGINS: /usr/lib/python3.6/site-packages/ansible_mitogen/plugins/strategy
-            ANSIBLE_STRATEGY: mitogen_linear
-        steps:
-        - uses: webfactory/ssh-agent@v0.1.1
-          with:
-            ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-        - uses: actions/checkout@v1
-        - uses: xilonz/trellis-action@v0.1.2
-          with: 
-            vault_password: ${{ secrets.vault_pass }}
-            site_env: production
-            site_name: example.com
+      steps:
+      - uses: actions/checkout@v1
+
+      - uses: webfactory/ssh-agent@v0.1.1
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - uses: xilonz/trellis-action@v0.1.2
+        with: 
+          vault_password: ${{ secrets.VAULT_PASS }}
+          site_env: production
+          site_name: example.com
 ```
 
 ### Seperated repo's
@@ -76,33 +75,32 @@ See: [roots/trellis#883 (comment)](https://github.com/roots/trellis/issues/883#i
 ```yaml
 # .github/workflows/main.yml
 jobs:
-    my_job:
+  my_job:
     ...
-        container:
-        image: cytopia/ansible:2.7-tools
-        env:
-            ANSIBLE_HOST_KEY_CHECKING: false
-            ANSIBLE_STRATEGY_PLUGINS: /usr/lib/python3.6/site-packages/ansible_mitogen/plugins/strategy
-            ANSIBLE_STRATEGY: mitogen_linear
-        steps:
-        - uses: webfactory/ssh-agent@v0.1.1
-          with:
-            ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-        - uses: actions/checkout@v1
-        - uses: actions/checkout@v1
-        - name: Move site to subdirectory
-            run: |
-                mv $GITHUB_WORKSPACE /tmp/repo
-                mkdir -p $GITHUB_WORKSPACE
-                mv /tmp/repo $GITHUB_WORKSPACE/$SITE_LOCAL_PATH
-                ls -la $GITHUB_WORKSPACE/$SITE_LOCAL_PATH
-        - name: Clone Trellis Repo
-            run: git clone --verbose --branch $TRELLIS_BRANCH --depth 1 $TRELLIS_REPO $GITHUB_WORKSPACE/trellis
-        - uses: xilonz/trellis-action@v0.1.2
-          with: 
-            vault_password: ${{ secrets.vault_pass }}
-            site_env: production
-            site_name: example.com
+    steps:
+    - uses: actions/checkout@v1
+
+    - uses: actions/checkout@v1
+      with:
+        repository: roots/trellis
+        ref: master
+        token: ${{ secrets.GIT_PAT }}
+        path: ${{ github.repository }}/trellis
+        fetch-depth: 1 
+
+    - uses: webfactory/ssh-agent@v0.1.1
+      with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          ssh-auth-sock: ${{ github.workspace }}/ssh-auth.sock 
+
+    - name: Trellis Deploy!
+      uses: xilonz/trellis-deploy@0.1.3
+      with: 
+        vault_password: ${{ secrets.VAULT_PASS }}
+        site_env: production
+        site_name: example.com
+        site_path:  ${{ github.workspace }}
+        trellis_path: ${{ github.workspace }}/trellis
 ```
 
 ## SSH Key 
@@ -203,9 +201,11 @@ If someone has a more elegant solution. Please PR!
 
 ## Known issues, limitations and FAQ
 
-### I don't know if this works with sage 9 - yet. 
+### NodeJS version
+We're using the `alpine:3.9` docker image, so only NodeJS 10 is available. 
 
-This action has not been tested with sage 9. Please let me know if this works for you. 
+### Python 3
+We're using python 3, make sure your trellis is up to date.
 
 ## Hacking
 

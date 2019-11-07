@@ -11,7 +11,7 @@ inputs:
       required: false
     vault_password:
       description: ansible vault password
-      default: '$VAULT_PASSWORD'
+      default: false
       required: false
     vault_password_file:
       description: ansible vault password file to use. Must be the same one in ansible.cfg(if applicable)
@@ -29,9 +29,34 @@ inputs:
     site_value:
       description: Search the WordPress site by key == value
       required: false
+    site_path:
+      description: Path where site lives
+      default: ${{ github.workspace }}
+      required: false
+    trellis_path:
+      description: Path where trellis lives
+      default: ${{ github.workspace }}/trellis
+      required: false
+    group_vars:
+      description: Group vars where sites are defined.
+      default: false #defaults to `group_vars/${site_env}/wordpress_sites.yml` in js
+      required: false
     verbose: 
       default: false
       required: false
+    ansible_strategy: 
+      description: Ansible strategy to use, supports mitogen.
+      default: linear
+      required: false
+    yarn_cache:
+      description: Yarn cache path, used for caching the cache.
+      default: ${{ github.workspace }}/.cache/yarn
+      required: false
 runs:
-  using: 'node12'
-  main: 'dist/index.js'
+  using: 'docker'
+  image: docker://docker.pkg.github.com/Xilonz/trellis-action/ansible-sage:latest
+  env:
+    ANSIBLE_HOST_KEY_CHECKING: false
+    ANSIBLE_STRATEGY_PLUGINS: /usr/lib/python3.6/site-packages/ansible_mitogen/plugins/strategy
+    ANSIBLE_STRATEGY:  ${{ inputs.ansible_strategy }}
+    YARN_CACHE_FOLDER: ${{ inputs.yarn_cache }}

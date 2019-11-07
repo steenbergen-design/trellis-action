@@ -1,15 +1,31 @@
 const core = require('@actions/core');
 const child_process = require('child_process');
 const fs = require('fs');
+const yaml = require('js-yaml');
 
 const verbose = core.getInput('verbose') ? '-vvv' : '';
 
+const site_path = core.getInput('site_path');
+const trellis_path = core.getInput('trellis_path');
+
+if(verbose) {
+    console.log(`
+Verbose: ${core.getInput('verbose')} (${verbose})
+Site Path: ${site_path}
+Trellis Path: ${trellis_path}
+    `);
+
+    Object.keys(process.env).forEach(function(key) {
+        let value = process.env[key];
+        console.log(key + ': ' + value); 
+    });
+}
+
 try {
     // Move to trellis dir
-    const trellis_path = core.getInput('trellis_path');
-    process.chdir(trellis_path ? trellis_path : `${process.env['GITHUB_WORKSPACE']}/trellis/`);
+    process.chdir(trellis_path);
 } catch (error) {
-    core.setFailed(`${process.env['GITHUB_WORKSPACE']}/trellis/ doesn\'t exist. Make sure to run actions/checkout before this`);
+    core.setFailed(`${trellis_path} doesn\'t exist. Make sure to run actions/checkout before this`);
 }
 
 // Manually wrap output
@@ -20,7 +36,7 @@ try {
     console.log(`Adding vault_pass to ${vault_pass_file}`);
     fs.writeFileSync(vault_pass_file, core.getInput('vault_password'));
 } catch (error) {
-    core.error(error.message);
+    core.error('Setting vault pass failed: '+error.message);
 }
 core.endGroup();
 
@@ -31,7 +47,7 @@ try {
     console.log("Installing Galaxy Roles using "+role_file);
     child_process.spawnSync(`ansible-galaxy install -r ${role_file} ${verbose}`);
 } catch (error) {
-    core.setFailed(error.message);
+    core.setFailed('Installing galaxy role failed: '+error.message);
 }
 core.endGroup();
 
@@ -39,36 +55,63 @@ core.endGroup();
 // I should clean up this mess
 try {
     const site_env = core.getInput('site_env', {required: true});
-    const site_name = core.getInput('site_name');
+    let site_name = core.getInput('site_name');
+    const group_vars = core.getInput('group_vars') && `group_vars/${site_env}/wordpress_sites.yml`;
+
+    const wordpress_sites = yaml.safeLoad(fs.readFileSync(group_vars, 'utf8'));
 
     if(site_name) {
-        core.group(`Deploy Site`, async () => {
-            const deploy = await deploy_site(site_name, site_env, process.env['GITHUB_SHA']);
-            return deploy;
-        });
+        let site = wordpress_sites.wordpress_sites[site_name];
+        deploy_site(site_name, site, site_env)
     } else { 
         const site_key = core.getInput('site_key', {required: true});
         const site_value = core.getInput('site_value', {required: true});
 
-        const yaml = require('js-yaml');
-        const config = yaml.safeLoad(fs.readFileSync(`group_vars/${site_env}/wordpress_sites.yml`, 'utf8'));
-
-        Object.keys(config.wordpress_sites).forEach(function(site_name) {
-            var site = config.wordpress_sites[site_name];
+        Object.keys(wordpress_sites.wordpress_sites).forEach(function(site_name) {
+            let site = wordpress_sites.wordpress_sites[site_name];
             if(site[site_key] == site_value) {
-                core.group(`Deploy Site ${site_name}`, async () => {
-                    const deploy = await deploy_site(site_name, site_env, process.env['GITHUB_SHA']);
-                    return deploy;
-                });
+                deploy_site(site_name, site, site_env);
             }
         });
-
     }
 } catch (error) {
-    core.setFailed(error.message);
+    core.setFailed('Deploy site(s) failed: ' + error.message);
 }
 
-function deploy_site(site_name, site_env, sha) {
+
+// Galaxy roles
+if(verbose) {
+    core.startGroup('Yarn Cache Files')
+    try {
+        fs.readdirSync(process.env['YARN_CACHE_FOLDER'] + '/v4').forEach(file => {
+            console.log(file);
+        });    
+    } catch (error) {
+        core.error('Yarn cache files fetch failed '+error.message);
+    }
+    core.endGroup();
+}
+
+function deploy_site(site_name, site, site_env){
+    // Make sure site folder exists. We're already in the trellis folder so this should work fine.
+    const ansible_site_path = site.local_path;
+    if (fs.existsSync(site_path) && !fs.existsSync(ansible_site_path) ) {
+        // Just symlink the directories together so ansible can find it.
+        console.log(`Symlink ${site_path} to ${ansible_site_path}`);
+        try {
+            fs.symlinkSync(site_path, ansible_site_path);
+        } catch (error) {
+            core.error(`Symlinkin ${site_path} to ${ansible_site_path} failed: ${error.message}`);
+        }
+    } 
+
+    core.group(`Deploy Site ${site_name}`, async () => {
+        const deploy = await run_playbook(site_name, site_env, process.env['GITHUB_SHA']);
+        return deploy;
+    });
+}
+
+function run_playbook(site_name, site_env, sha) {
     try {
         const child = child_process.spawnSync('ansible-playbook', ['deploy.yml',`-e site=${site_name}`, `-e env=${site_env}`, `-e site_version=${sha} ${verbose}`]);
 
@@ -82,6 +125,6 @@ function deploy_site(site_name, site_env, sha) {
             if(child.error) core.setFailed(child.error.message);
             else core.setFailed(`${child.stderr}`);
     } catch (error) {
-        core.setFailed(error.message);
+        core.setFailed('Running playook failed: '+ error.message);
     }
 }
