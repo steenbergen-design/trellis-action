@@ -1,0 +1,23 @@
+name: Publish Docker image to Docker Package Registry
+on: push
+
+jobs: 
+  build:
+    name: Publish to Docker Package Registry
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Publish to Docker Package Registry
+      uses: elgohr/Publish-Docker-Github-Action@master
+      id: docker
+      with:
+        name: steenbergendesign/github-action-trellis
+        username: ${{ secrets.DOCKER_USER }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: Results of publishing package
+      run: |
+        echo "The tag of the Docker Image is: $VAR1"
+      env:
+        VAR1: ${{ steps.docker.outputs.tag }}
