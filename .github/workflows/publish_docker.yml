@@ -12,7 +12,7 @@ jobs:
       uses: elgohr/Publish-Docker-Github-Action@master
       id: docker
       with:
-        name: xilonz/ansible-sage
+        name: xilonz/trellis-action/ansible-sage
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
         registry: docker.pkg.github.com
