@@ -79,7 +79,7 @@ See: [roots/trellis#883 (comment)](https://github.com/roots/trellis/issues/883#i
 +     with:
 +       repository: roots/trellis
 +       ref: master
-+       token: ${{ secrets.GIT_PAT }} #Your github acces token
++       token: ${{ secrets.GIT_PAT }} #Your GitHub access token
 +       path: repo-name/trellis
 +       fetch-depth: 1 
 
