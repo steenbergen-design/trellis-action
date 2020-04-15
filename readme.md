@@ -42,6 +42,7 @@ jobs:
       - uses: webfactory/ssh-agent@v0.1.1
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          ssh-auth-sock: ${{ github.workspace }}/ssh-auth.sock
 
       - uses: steenbergen-design/trellis-action@v1
         with: 
