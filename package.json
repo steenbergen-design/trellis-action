@@ -2,7 +2,7 @@
     "name": "steenbergendesign-action-trellis",
     "repository": "",
     "description": "GitHub Action to deploy to trellis environmnet",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "main": "index.js",
     "author": "Steenbergen Design <arjan@steenbergen.design>",
     "license": "MIT",
