@@ -7,7 +7,7 @@ This action will symlink site_local to their right place as defined in `wordpres
 - [Trellis](https://github.com/roots/trellis) (pyhton 3 compatable)
 - [Github Actions](https://github.com/features/actions)
 - (Optional) Bedrock
-- (Optional) Sage [9.0.1](https://github.com/roots/sage/releases/tag/9.0.1) (node 10 compatibe) or later
+- (Optional) Sage [9.0.1](https://github.com/roots/sage/releases/tag/9.0.1) (node 10 compatible) or later
 
 ## `with` args
 Check [`action.yml`](./action.yml) inputs for all `with` args available. You can also define `env` vars to use with ansible. 
@@ -190,7 +190,7 @@ If someone has a more elegant solution. Please PR!
 ## Known issues, limitations and FAQ
 
 ### NodeJS version
-We're using the `alpine:3.9` docker image, so only NodeJS 10 is available. 
+We're using the `alpine:3.11` docker image, so NodeJS 12 is available. 
 
 ### Python 3
 We're using python 3, make sure your trellis is up to date.
