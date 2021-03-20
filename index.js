@@ -47,7 +47,7 @@ core.startGroup('Install Galaxy Roles')
 try {
     const role_file = core.getInput('role_file');
     console.log("Installing Galaxy Roles using "+role_file);
-    child_process.spawnSync(`ansible-galaxy install -r ${role_file} ${verbose}`);
+    child_process.execSync(`ansible-galaxy install -r ${role_file} ${verbose}`);
 } catch (error) {
     core.setFailed('Installing galaxy role failed: '+error.message);
 }
@@ -115,7 +115,7 @@ function deploy_site(site_name, site, site_env){
 
 function run_playbook(site_name, site_env, sha) {
     try {
-        const child = child_process.spawnSync('ansible-playbook', ['deploy.yml',`-e site=${site_name}`, `-e env=${site_env}`, `-e site_version=${sha} ${verbose}`]);
+        const child = child_process.execSync('ansible-playbook', ['deploy.yml',`-e site=${site_name}`, `-e env=${site_env}`, `-e site_version=${sha} ${verbose}`]);
 
         if( child.stdout ) 
             console.log(`${child.stdout}`);
