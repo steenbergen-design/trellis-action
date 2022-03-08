@@ -4,13 +4,15 @@ This action deploys your bedrock site to your trellis environment.
 This action will symlink site_local to their right place as defined in `wordpress_sites.yml`, so you're also covered when trellis and your bedrock setup are not in the same repo.
 
 ## Requirements
+
 - [Trellis](https://github.com/roots/trellis) (pyhton 3 compatable)
 - [Github Actions](https://github.com/features/actions)
 - (Optional) Bedrock
 - (Optional) Sage [9.0.1](https://github.com/roots/sage/releases/tag/9.0.1) (node 10 compatible) or later
 
 ## `with` args
-Check [`action.yml`](./action.yml) inputs for all `with` args available. You can also define `env` vars to use with ansible. 
+
+Check [`action.yml`](./action.yml) inputs for all `with` args available. You can also define `env` vars to use with ansible.
 
 ## File Structures
 
@@ -19,7 +21,8 @@ Check [`action.yml`](./action.yml) inputs for all `with` args available. You can
 ### Official
 
 Use [`main.yml`](./main.yml) if your directory structure follow [the official documents](https://roots.io/trellis/docs/installing-trellis/#create-a-project):
-```
+
+```plain
 example.com/      # → Root folder for the project
 ├── .git/         # → Only one git repo
 ├── trellis/      # → Your clone of roots/trellis, directory name must be `trellis`
@@ -27,16 +30,17 @@ example.com/      # → Root folder for the project
 ```
 
 To install `main.yml`:
+
 1. Set up SSH keys, Ansible Vault password and commit Trellis changes described in the following sections
-1. In your repository, go to the *Settings > Secrets* menu and create a new secret called `vault_pass`. Put the vault pass into the contents field.
+1. In your repository, go to the _Settings > Secrets_ menu and create a new secret called `vault_pass`. Put the vault pass into the contents field.
 1. In your workflow definition file, add `steenbergen-design/trellis-action@v1`. See next example:
 
 ```yaml
 # .github/workflows/main.yml
 jobs:
-    my_job:
-    ...
-      steps:
+  my_job:
+  ...
+    steps:
       - uses: actions/checkout@v1
 
       - uses: webfactory/ssh-agent@v0.1.1
@@ -45,7 +49,7 @@ jobs:
           ssh-auth-sock: ${{ github.workspace }}/ssh-auth.sock
 
       - uses: steenbergen-design/trellis-action@v1
-        with: 
+        with:
           vault_password: ${{ secrets.VAULT_PASS }}
           site_env: production
           site_name: example.com
@@ -54,13 +58,14 @@ jobs:
 ### Seperated repo's
 
 Some use a opinionated project structure:
+
 - separate Trellis and Bedrock as 2 different git repo
 - name the Bedrock-based WordPress site directory more creatively, i.e: `bedrock`
 
-```
+```plain
 example.com/      # → Root folder for the project
 ├── bedrock/      # → A Bedrock-based WordPress site, directory name doesn't matter
-│   └── .git/     # Bedrock git repo
+│   └── .git/     # Bedrock git repo
 └── trellis/      # → Clone of roots/trellis, directory name must be `trellis`
     └── .git/     # Trellis git repo
 ```
@@ -68,8 +73,8 @@ example.com/      # → Root folder for the project
 See: [roots/trellis#883 (comment)](https://github.com/roots/trellis/issues/883#issuecomment-329052189)
 
 1. Set up SSH keys, Ansible Vault password and commit Trellis changes described in the following sections
-1. In your repository, go to the *Settings > Secrets* menu and create a new secret called `vault_pass`. Put the vault pass into the contents field.
-1. In your workflow definition file, add `steenbergen-design/trellis-action@v1` and another checkout action for your trellis repo. See next example. The trellis action will move the site to its right directory, so there's no additional setup required. 
+2. In your repository, go to the _Settings > Secrets_ menu and create a new secret called `vault_pass`. Put the vault pass into the contents field.
+3. In your workflow definition file, add `steenbergen-design/trellis-action@v1` and another checkout action for your trellis repo. See next example. The trellis action will move the site to its right directory, so there's no additional setup required.
 
 ```diff
     ...
@@ -91,12 +96,13 @@ See: [roots/trellis#883 (comment)](https://github.com/roots/trellis/issues/883#i
     ...
 ```
 
-## SSH Key 
-This is only aplicable if using one of the example codes above. This action has no option to set a SSH key. 
+## SSH Key
+
+This is only aplicable if using one of the example codes above. This action has no option to set a SSH key.
 
 In order to create a new SSH key, run `ssh-keygen -t rsa -b 4096 -m pem -f path/to/keyfile`. This will prompt you for a key passphrase and save the key in `path/to/keyfile`.
 
-Having a passphrase is a good thing, since it will keep the key encrypted on your disk. When configuring the secret `SSH_PRIVATE_KEY` value in your repository, however, you will need the private key *unencrypted*. 
+Having a passphrase is a good thing, since it will keep the key encrypted on your disk. When configuring the secret `SSH_PRIVATE_KEY` value in your repository, however, you will need the private key _unencrypted_.
 
 To show the private key unencrypted, run `openssl rsa -in path/to/key -outform pem`.
 
@@ -111,6 +117,7 @@ To actually grant the SSH key access, you can – on GitHub – use at least two
 ### Trellis
 
 1. Add the SSH key to web server
+
     ```diff
         # group_vars/<env>/users.yml
         users:
@@ -126,8 +133,8 @@ To actually grant the SSH key access, you can – on GitHub – use at least two
             keys:
             - https://github.com/human.keys
     ```
-1. Re-provision
-    `$ ansible-playbook server.yml -e env=<env> --tags users`
+
+2. Re-provision: `$ ansible-playbook server.yml -e env=<env> --tags users`
 
 ## Ensure Trellis Deploys the Correct Commit
 
@@ -154,6 +161,7 @@ The examples assume you have defined `vault_password_file = .vault_pass` in `ans
 ```
 
 To use another vault password filename:
+
 ```diff
         - uses: steenbergen-design/trellis-action@v1
           with: 
@@ -174,6 +182,7 @@ Using [Ansible Vault](https://docs.ansible.com/ansible/playbooks_vault.html) to 
 ```
 
 ## Mutliple sites at once
+
 You can also choose to deploy multiple sites at once by searching for `site_key == site_value`.
 If someone has a more elegant solution. Please PR!
 
@@ -190,9 +199,11 @@ If someone has a more elegant solution. Please PR!
 ## Known issues, limitations and FAQ
 
 ### NodeJS version
-We're using the `alpine:3.11` docker image, so NodeJS 12 is available. 
+
+We’re using the `willhallonline/ansible:2.12-alpine-3.15` docker image, so NodeJS 16 is available.
 
 ### Python 3
+
 We're using python 3, make sure your trellis is up to date.
 
 ## Hacking
@@ -204,10 +215,11 @@ As a note to my future self, in order to work on this repo:
 * _hack hack hack_
 * `node index.js` (inputs are passed through `INPUT_` env vars)
 * Run `./node_modules/.bin/ncc build index.js` to update `dist/index.js`, which is the file actually run
-* Read https://help.github.com/en/articles/creating-a-javascript-action if unsure.
+* Read [Creating a JavaScript action](https://help.github.com/en/articles/creating-a-javascript-action) if unsure.
 * Maybe update the README example when publishing a new version.
 
 ## Credits, Copyright and License
+
 [Trellis Action](https://github.com/steenbergen-design/trellis-action) is a [Steenbergen Design](https://steenbergen.design) project and maintained by Arjan Steenbergen
 
 Special thanks to [the Roots team](https://roots.io/about/) whose [Trellis](https://github.com/roots/trellis) make this project possible. Also special thanks to [TypistTech](https://github.com/TypistTech) where I got a lot if inspiration and got [parts](https://github.com/TypistTech/tiller-circleci) of this documentation from.

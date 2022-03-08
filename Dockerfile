@@ -1,5 +1,4 @@
-  
-FROM willhallonline/ansible:2.9-alpine
+FROM willhallonline/ansible:2.12-alpine-3.15
 
 COPY ./dist/index.js /index.js
 
