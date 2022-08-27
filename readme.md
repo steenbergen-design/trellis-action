@@ -4,7 +4,7 @@ This action deploys your bedrock site to your trellis environment.
 This action will symlink site_local to their right place as defined in `wordpress_sites.yml`, so you're also covered when trellis and your bedrock setup are not in the same repo.
 
 ## Requirements
-- [Trellis](https://github.com/roots/trellis) (pyhton 3 compatable)
+- [Trellis](https://github.com/roots/trellis) (python 3 compatable)
 - [Github Actions](https://github.com/features/actions)
 - (Optional) Bedrock
 - (Optional) Sage [9.0.1](https://github.com/roots/sage/releases/tag/9.0.1) (node 10 compatible) or later
