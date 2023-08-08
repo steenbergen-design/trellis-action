@@ -4,7 +4,7 @@ This action deploys your bedrock site to your trellis environment.
 This action will symlink site_local to their right place as defined in `wordpress_sites.yml`, so you're also covered when trellis and your bedrock setup are not in the same repo.
 
 ## Requirements
-- [Trellis](https://github.com/roots/trellis) (pyhton 3 compatable)
+- [Trellis](https://github.com/roots/trellis) (python 3 compatible)
 - [Github Actions](https://github.com/features/actions)
 - (Optional) Bedrock
 - (Optional) Sage [9.0.1](https://github.com/roots/sage/releases/tag/9.0.1) (node 10 compatible) or later
@@ -92,7 +92,7 @@ See: [roots/trellis#883 (comment)](https://github.com/roots/trellis/issues/883#i
 ```
 
 ## SSH Key 
-This is only aplicable if using one of the example codes above. This action has no option to set a SSH key. 
+This is only applicable if using one of the example codes above. This action has no option to set a SSH key. 
 
 In order to create a new SSH key, run `ssh-keygen -t rsa -b 4096 -m pem -f path/to/keyfile`. This will prompt you for a key passphrase and save the key in `path/to/keyfile`.
 
